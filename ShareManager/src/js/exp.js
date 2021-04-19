@@ -63,6 +63,7 @@ App = {
             projectTemplate.find('.pmembers').text(projectData[4]);
             projectTemplate.find('.ptasks').text(projectData[5]);
             projectTemplate.find('.btn-projId').attr('dataid', projectData[0]);       
+            projectTemplate.find('.btn-projId').attr('id', projectData[0]);       
             projectRow.append(projectTemplate.html());
           });
         }
@@ -71,6 +72,7 @@ App = {
 
     });
   });
+  return App.bindEvents();
   },  //initContract End
 
   
@@ -81,9 +83,18 @@ App = {
   handleExProj: function(event) {
     event.preventDefault();
 
-    var dataId = parseInt($(event.target).data('dataid'));
-    console.log(dataId);
-    //localStorage.setItem( 'openProj', dataid );
+    var e = event.target.id;
+
+    window.localStorage.setItem( 'openProj', e );
+
+    window.location.href = "project.html";
+
+    //var petId = $(event.target).data('dataid');
+    //console.log(petId);
+
+    //var dataId = parseInt($(event.target).data('dataid'));
+    //var dataId = document.getElementById('dataid').value;
+    //console.log($(event.target).data("dataid"));
   }
 }
 

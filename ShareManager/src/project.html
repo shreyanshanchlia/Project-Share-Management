@@ -7,9 +7,15 @@
   <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
   <title>Share Manager</title>
   <link rel="icon" href="">
+  <script src="js/web3.min.js" type="text/javascript">
+  </script>
+  <script src="js/truffle-contract.js" type="text/javascript">
+  </script>
 </head>
 
 <body>
+  <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+  <script src="js/project.js"></script>
   <header class="text-gray-600 body-font">
       <div class="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
         <a class="flex title-font font-medium items-center text-gray-900 mb-4 md:mb-0">
@@ -25,24 +31,20 @@
         </button>
       </div>
   </header>
+
   <section class="text-gray-600 body-font">
     <div class="container px-5 py-24 mx-auto">
+      
       <div class="flex flex-wrap w-full mb-20 flex-col items-center text-center">
-        <h1 class="sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">Project Name     
-        <button class="flex-none text-white bg-green-000 border-0 py-2 px-2 focus:outline-none hover:bg-indigo-100 rounded text-lg">
-          <img src="images/edit.png" alt="edit" width="20" height="20">
-        </button>
-        </h1>
-        <p class="lg:w-1/2 w-full leading-relaxed text-gray-500">Project Description.</p>
+        <h1 class="pname sm:text-3xl text-2xl font-medium title-font mb-2 text-gray-900">Project Name</h1>
+        <p class="pdesc lg:w-1/2 w-full leading-relaxed text-gray-500">Project Description.</p>
       </div>
 
-      <div class="flex mb-4">
-        <a class="flex-grow text-indigo-500 border-b-2 border-indigo-500 py-2 text-lg px-1">Tasks</a>
-        <a class="flex-grow border-b-2 border-gray-300 py-2 text-lg px-1">Contributors</a>
+      <div id="tasksRow" class="flex flex-grow">
+        <!-- TASKS LOAD HERE -->
       </div>
 
-      <div class="flex flex-wrap -m-4">
-
+      <div class="flex flex-wrap -m-4" id="taskTemplate" style="display:none;">
         <div class="xl:w-1/3 md:w-1/2 p-4">
           <div class="border border-gray-200 p-6 rounded-lg">
             <div class="w-10 h-10 inline-flex items-center justify-center rounded-full bg-indigo-100 text-indigo-500 mb-4">
@@ -50,33 +52,62 @@
                 <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7"></path>
               </svg>
             </div>
-            <button class="flex-none text-white bg-green-000 rounded-full border-0 py-2 px-2 focus:outline-none hover:bg-indigo-100 rounded text-lg">  
-              <img src="images/edit.png" alt="edit" width="20" height="20">
-            </button>
             <h2 class="text-lg text-gray-900 font-medium title-font mb-2">Task</h2>
             <p class="leading-relaxed text-base">Task Description.</p>
           </div>
         </div>
       </div>
 
-      <div class="flex flex-wrap -m-4">
-        <div class="p-2 lg:w-1/3 md:w-1/2 w-full">
-          <div class="h-full flex items-center border-gray-200 border p-4 rounded-lg">
-            <img alt="team" class="w-16 h-16 bg-gray-100 object-cover object-center flex-shrink-0 rounded-full mr-4" src="https://dummyimage.com/94x94">
-            <div class="flex-grow">
-              <h2 class="text-gray-900 title-font font-medium">Contributor Name
-                <a href="contributor.html">
-                  <button class="flex-none text-white bg-green-000 rounded-full border-0 py-2 px-2 focus:outline-none hover:bg-indigo-100 rounded text-lg">  
-                    <img src="images/edit.png" alt="edit" width="16" height="16">
-                  </button>
-                </a>
-              </h2>
-              <p class="text-gray-500">Contributor Designation</p>
-            </div>
+
+    <div class="lg:w-1/2 md:w-2/3 mx-auto">
+      <div class="flex flex-wrap -m-2">
+        <div class="p-2 w-full">
+          <div class="relative">
+            <label for="name" class="leading-7 text-sm text-gray-600">Task Name</label>
+            <input type="text" id="name" name="name" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
           </div>
         </div>
-        
+        <div class="p-2 w-full">
+          <div class="relative">
+            <label for="message" class="leading-7 text-sm text-gray-600">Task Description</label>
+            <textarea id="message" name="message" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 h-32 text-base outline-none text-gray-700 py-1 px-3 resize-none leading-6 transition-colors duration-200 ease-in-out"></textarea>
+          </div>
+        </div>
+        <div class="p-2 w-full">
+          <button class="flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Add Task</button>
+        </div>
       </div>
+    </div>
+
+
+    <div class="flex flex-wrap -m-4" id="contributorTemplate" style="display:none;">
+      <div class="xl:w-1/3 md:w-1/2 p-4">
+        <div class="border border-gray-200 p-6 rounded-lg">
+          <div class="flex flex-row">
+            <div class="w-16 h-16 bg-gray-100 object-cover object-center flex-shrink-0 rounded-full mr-4">
+              <p class="text-center text-4xl">0</p>
+            </div>
+            <div class="text-lg text-gray-900 font-medium title-font mb-2 align-middle">Contributor Name</div>
+          </div>
+          <p class="leading-relaxed text-base">
+            <div class="flex flex-row">
+              <input type="number" id="full-name" name="full-name" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-transparent focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+              <button class="text-white bg-indigo-500 border-2 py-2 px-10 focus:outline-none hover:bg-indigo-600 rounded text-lg">Allocate</button>
+            </div>
+          </p>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="flex lg:w-2/3 w-full sm:flex-row flex-col mx-auto px-8 sm:space-x-4 sm:space-y-0 space-y-4 sm:px-0 items-end">
+      <div class="relative flex-grow w-10">
+        <label for="full-name" class="leading-7 text-sm text-gray-600">User ID</label>
+        <input type="number" id="full-name" name="full-name" class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-transparent focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out">
+      </div>
+      <button class="text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg">Add Contributor</button>
+    </div>
+    
     </div>
   </section>
 </body>

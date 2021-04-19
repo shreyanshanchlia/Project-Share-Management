@@ -47,11 +47,35 @@ App = {
       var MainInstance;
       App.contracts.Main.deployed().then(function(instance){
       MainInstance = instance;
-      
+
+      var x = parseInt(window.localStorage.getItem('openProj'));
+
+      MainInstance.projects(x).then(function(pData)
+      {
+        var projectData = pData;
+        // projectTemplate.find('.ptags').text(projectData[6]);
+        $(document).find('.pname').text(projectData[1]);
+        $(document).find('.pdesc').text(projectData[2]);
+        
+        //to make this
+        var tasksRow = $('#tasksRow');  
+
+        var taskTemplate = $('#taskTemplate');
+        var tasksCount = projectData[5].toNumber();
+        //console.log(tasksCount);
+        for (i = 0; i < tasksCount; i ++) 
+        { 
+
+          tasksRow.append(taskTemplate.html());
+        }
+
       });
 
+      });
     });
     }
+
+
   }
   
   $(function() {
