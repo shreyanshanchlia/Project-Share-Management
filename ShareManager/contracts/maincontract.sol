@@ -11,7 +11,6 @@ contract maincontract{
         string tags;
         uint256[10] contributors;
         uint256[10] shares;
-        uint256[10] taskId;
         string[10] taskName;
         string[10] taskDescription;
     }
@@ -35,17 +34,31 @@ contract maincontract{
     event userAdded(string _name);
     event contributorAdded(uint256 newContributor, uint256 projectId);
     event sharesAllocated(uint256 oldShares, uint256 Newshares, uint256 projectId, uint256 contributorId);
-    // event TaskCreated(uint256 _taskId, string _taskName);
+    event TaskCreated(uint256 _taskId, string _taskName);
 
     constructor() public{
         currentUser = msg.sender;
     }
+
+    function userExist() public view returns(bool){
+        return userId[msg.sender] != 0;
+    }
     
     function getProjects() public view returns(uint256[] memory){
-        return users[userId[currentUser]-1].projectsInvolved;
+        return users[userId[msg.sender]-1].projectsInvolved;
     }
     function getProjectCount() public view returns(uint256){
-        return users[userId[currentUser]-1].projectsInvolved.length;
+        return users[userId[msg.sender]-1].projectsInvolved.length;
+    }
+
+    function getContributor(uint projectId, uint i) public view returns(uint256){
+        return projects[projectId-1].contributors[i];
+    }
+    function getTaskName(uint projectId, uint i) public view returns(string memory){
+        return projects[projectId-1].taskName[i];
+    }
+    function getTaskDescription(uint projectId, uint i) public view returns(string memory){
+        return projects[projectId-1].taskDescription[i];
     }
 
     function adduseraccount(string memory _name) public {
@@ -91,7 +104,7 @@ contract maincontract{
     function allocateSharesTo(uint256 Newshares, uint256 projectId, uint256 _contributorId) public {
         require(projectId <= totalProjectCount, "No such Project");
         require(_contributorId <= totalUserCount, "No such user");
-        require(projects[projectId].founder == userId[currentUser], "You are not the founder!");
+        require(projects[projectId].founder == userId[msg.sender], "You are not the founder!");
         
         uint oldshares;
         for(uint i=0; i<projects[projectId-1].contributors.length; i++){
@@ -111,10 +124,9 @@ contract maincontract{
     function createTask(uint256 _projectId, string memory _taskName, string memory _description) public {
         require(bytes(_taskName).length>0,"task name can not be an empty string");
         require(bytes(_description).length>0,"name can not be an empty string");
-        uint256 task = projects[_projectId].tasks++;
-        projects[_projectId].taskName[task] = _taskName;
-        projects[_projectId].taskDescription[task] = _description;
-        projects[_projectId].taskId[task] = task+1;
+        uint256 task = projects[_projectId-1].tasks++;
+        projects[_projectId-1].taskName[task] = _taskName;
+        projects[_projectId-1].taskDescription[task] = _description;
         emit TaskCreated(task+1, _taskName);
     }
     

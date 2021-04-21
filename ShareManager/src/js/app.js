@@ -57,7 +57,12 @@ App = {
         console.log(tags);
         console.log(description);
         
-        //await MainInstance.adduseraccount('User 1');
+        var exist = await MainInstance.userExist();
+        if(!exist)
+        {
+          console.log("creating user");
+          await MainInstance.adduseraccount('User 1');
+        }
         await MainInstance.createProject(name, description, tags, { from: web3.currentProvider.selectedAddress });
         console.log("created new project");
       }

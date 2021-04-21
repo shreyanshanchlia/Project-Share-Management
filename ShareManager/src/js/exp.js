@@ -88,13 +88,6 @@ App = {
     window.localStorage.setItem( 'openProj', e );
 
     window.location.href = "project.html";
-
-    //var petId = $(event.target).data('dataid');
-    //console.log(petId);
-
-    //var dataId = parseInt($(event.target).data('dataid'));
-    //var dataId = document.getElementById('dataid').value;
-    //console.log($(event.target).data("dataid"));
   }
 }
 
